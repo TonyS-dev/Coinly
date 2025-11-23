@@ -1,4 +1,4 @@
-package com.coinly.coinly
+package com.coinly
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
