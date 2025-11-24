@@ -1,7 +1,7 @@
 package com.coinly.common.advice
 
-import com.coinly.common.exceptions.ResourceNotFoundException
-import com.coinly.common.exceptions.UserAlreadyExistsException
+import com.coinly.common.exception.ResourceNotFoundException
+import com.coinly.common.exception.UserAlreadyExistsException
 import com.coinly.common.util.Trace
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory

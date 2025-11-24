@@ -1,5 +1,9 @@
 package com.coinly.config
-
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
+import io.swagger.v3.oas.annotations.info.Info as InfoAnnotation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
@@ -9,6 +13,18 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
+@OpenAPIDefinition(
+    info = InfoAnnotation(title = "Coinly API", version = "1.0.0", description = "API for personal finance management."),
+    // Defines the security scheme globally
+    security = [SecurityRequirement(name = "bearerAuth")]
+)
+@SecurityScheme(
+    name = "bearerAuth", // This name must match the name used in @SecurityRequirement
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    description = "Enter JWT Bearer token"
+)
 class OpenApiConfig {
 
     @Bean

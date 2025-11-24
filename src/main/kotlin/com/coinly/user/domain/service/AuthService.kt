@@ -1,6 +1,6 @@
 package com.coinly.user.domain.service
 
-import com.coinly.common.exceptions.UserAlreadyExistsException
+import com.coinly.common.exception.UserAlreadyExistsException
 import com.coinly.security.TokenProvider
 import com.coinly.user.domain.model.User
 import com.coinly.user.domain.repository.UserRepository

@@ -1,5 +1,7 @@
 package com.coinly.transaction.domain.service
 
+import com.coinly.common.exception.NotAuthorizedException
+import com.coinly.common.exception.ResourceNotFoundException
 import com.coinly.transaction.domain.model.Transaction
 import com.coinly.transaction.domain.model.TransactionType
 import com.coinly.transaction.domain.repository.TransactionRepository
@@ -35,14 +37,43 @@ class TransactionService(private val transactionRepository: TransactionRepositor
         return transactionRepository.findAllByUserId(userId)
     }
 
+    fun updateTransaction(
+        transactionId: UUID,
+        userId: UUID,
+        amount: BigDecimal?,
+        type: TransactionType?,
+        category: String?,
+        description: String?,
+        transactionDate: Instant?
+    ): Transaction {
+        val existingTransaction = transactionRepository.findById(transactionId)
+            ?: throw ResourceNotFoundException("Transaction with ID $transactionId not found.")
+
+        // Business Rule: A user can only update their own transactions
+        if (existingTransaction.userId != userId) {
+            throw NotAuthorizedException("User is not authorized to update this transaction.") // Crea esta excepción en common
+        }
+
+        val updatedTransaction = existingTransaction.copy(
+            amount = amount ?: existingTransaction.amount,
+            type = type ?: existingTransaction.type,
+            category = category ?: existingTransaction.category,
+            description = description ?: existingTransaction.description,
+            transactionDate = transactionDate ?: existingTransaction.transactionDate
+        )
+
+        return transactionRepository.save(updatedTransaction)
+    }
+
     fun deleteTransaction(transactionId: UUID, userId: UUID) {
         val transaction = transactionRepository.findById(transactionId)
-        // Business Rule: A user can only delete their own transactions
-        if (transaction != null && transaction.userId == userId) {
-            transactionRepository.deleteById(transactionId)
-        } else {
-            // Throw an exception (e.g., TransactionNotFoundException or NotAuthorizedException)
-            throw IllegalStateException("Transaction not found or user not authorized.")
+            ?: throw ResourceNotFoundException("Transaction with ID $transactionId not found.")
+
+        // Business rule: A user can only delete their own transactions
+        if (transaction.userId != userId) {
+            throw NotAuthorizedException("User is not authorized to delete this transaction.")
         }
+
+        transactionRepository.deleteById(transactionId)
     }
 }
