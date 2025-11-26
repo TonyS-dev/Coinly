@@ -31,13 +31,14 @@ class AuthController(private val authService: AuthService) {
         ApiResponse(responseCode = "409", description = "Username or email is already taken", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = ProblemDetail::class))])
     ])
     @PostMapping("/register")
-    fun register(@Valid @RequestBody request: RegisterRequest): ResponseEntity<Void> {
+    fun register(@Valid @RequestBody request: RegisterRequest): AuthResponse {
         authService.register(
             username = request.username,
             email = request.email,
             password = request.password
         )
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+        val token = authService.login(request.email, request.password)
+        return AuthResponse(token)
     }
 
     @Operation(summary = "Log in a user")
